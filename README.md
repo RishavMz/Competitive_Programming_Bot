@@ -1,6 +1,6 @@
 # Codeforces_bot
 
-A discord bot to get information about upcoming contests and view rating changes along with custom ranklists
+A discord bot to get information about upcoming contests and viewing rating changes along with custom ranklists.
 This bot uses the API feature provided by codeforces
 
 ###
