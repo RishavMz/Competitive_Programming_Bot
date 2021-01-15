@@ -1,6 +1,10 @@
+import discord
+import os
 import urllib.request , urllib.parse, urllib.error
 import json
 from datetime import datetime
+from dotenv import load_dotenv
+
 
 ####################################################################################################
 
@@ -14,38 +18,40 @@ def contestList():
                 for data in js['result']:
                     if(data['phase']=='BEFORE'):
                         contests.append(data)
-                print("=== UPCOMING CONTESTS ON CODEFORCES ===")
+                st = ''
+                st = st+"= UPCOMING CONTESTS ON CODEFORCES =\n"
                 for data in contests:
                     time = data['startTimeSeconds']
-                    print('========================================================================')
-                    print("=    Contest ID   : ",data['id'])
-                    print("=    Contest Name : ",data['name'])
-                    print("=    Start Time   : ", datetime.utcfromtimestamp(time))
-                    print("=    End Time     : ",datetime.utcfromtimestamp(time + data['durationSeconds']))
-                    print('========================================================================')  
-                    print()  
+                    st = st + "==================================\n"
+                    st = st + "Contest ID   : "+str(data['id'])+"\n"
+                    st = st + "Contest Name : "+str(data['name'])+"\n"
+                    st = st + "Start Time   : "+str( datetime.utcfromtimestamp(time))+"\n"
+                    st = st + "End Time     : "+str(datetime.utcfromtimestamp(time + data['durationSeconds']))+"\n"
+                    st = st + "==================================\n" 
+                return st
             else:
-                print("===No Contest in near future. Please check again later.===")        
+                return "===No Contest in near future. Please check again later.==="        
     except:
-        print('====Failed to load data====')    
+        return '====Failed to load data===='
 
 ###########################################################################################################
 
-def ratingchange(handle):
+def ratingChange(handle):
     handle = urllib.request.urlopen('https://codeforces.com/api/user.rating?handle='+handle)
     fhand = handle.read().decode()
     try:
         js = json.loads(fhand)
         if(js['status']=='OK'):
-            print("===============================================================================")   
-            print("=    Last round participated : ",js['result'][-1]['contestName'])
-            print("=    Old Rating              : ",js['result'][-1]['oldRating'])
-            print("=    New Rating              : ",js['result'][-1]['newRating'])
-            print("=    Rank                    : ",js['result'][-1]['rank'])
-            print("================================================================================")
-            print()
+            st = ''
+            st = st + "==================================\n" 
+            st = st + "=    Last round participated : "+str(js['result'][-1]['contestName'])+"\n"
+            st = st + "=    Old Rating              : "+str(js['result'][-1]['oldRating'])+"\n"
+            st = st + "=    New Rating              : "+str(js['result'][-1]['newRating'])+"\n"
+            st = st + "=    Rank                    : "+str(js['result'][-1]['rank'])+"\n"
+            st = st + "==================================\n"
+            return st
     except:
-        print("====Failed to load data / Handle not found ====")
+        return "====Failed to load data===="
 
 ##################################################################################################################
 
@@ -56,21 +62,18 @@ def userInfo(li):
     try:
         js = json.loads(fhand)
         if(js['status']=='OK'):
+            st = ''
             for data in js['result'] :
-                try:
-                    print("=============================================================================")
-                    print("=    Handle         : ",data['handle'])
-                    print("=    Max Rank       : ",data['maxRank'])
-                    print("=    Max Rating     : ",data['maxRating'])
-                    print("=    Current Rank   : ",data['rank'])
-                    print("=    Current Rating : ",data['rating'])
-                    print("=============================================================================")
-                    print()
-                except:
-                    print("No matching data for ",data['handle'])
+                st = st + "==================================\n"
+                st = st + "=    Handle         : "+str(data['handle'])+'\n'
+                st = st + "=    Max Rank       : "+str(data['maxRank'])+'\n'
+                st = st + "=    Max Rating     : "+str(data['maxRating'])+'\n'
+                st = st + "=    Current Rank   : "+str(data['rank'])+'\n'
+                st = st + "=    Current Rating : "+str(data['rating'])+'\n'
+                st = st + "==================================\n"
+            return st    
     except:
-        print("====Failed to load data / Handle not found ====")            
-
+        return "====Failed to load data===="   
 #############################################################################################################
 
 def ranklist(contestid , competitors):
@@ -82,50 +85,55 @@ def ranklist(contestid , competitors):
         js = json.loads(fhand)
         if(js['status']=='OK'):
             rank = 1
-            print(js['result']['rows'][0])
-            print("===============================================================")
-            print("==                 Custom Ranklist                           ==")
-            print("===============================================================")
-            print()
-            print(" Custom Rank     Points         Handle")
+            st = ''
+            st = st + "==================================\n"
+            st = st + "==       Custom Ranklist        ==\n"
+            st = st + "==================================\n\n"
+            st = st + " Sl.  Points       Handle\n"
             for data in js['result']['rows'] :
-                print()
-                print("=>   ",rank,'        ',int(data['points']),'         ',(data['party']['members'][0]['handle'])) 
-                rank += 1               
+                st = st + "=>   "+str(rank)+'        '+str(int(data['points']))+'         '+(data['party']['members'][0]['handle'])+'\n' 
+                rank += 1   
+            return st                
 
     except:
-        print("====Failed to load data====")         
+        return "====Failed to load data===="         
 
 ####################################################################################################
 
-print("****************************************************************** *")
-print("*                                                                  *")
-print("* Hello , I'm noob bot.                                            *")
-print("* Currently I use codeforces API to fetch data requested by users  *")
-print("*                                                                  *")
-print("* Interact with me :                                               *")
-print("* 1        => Get list of future contests                          *")
-print("*                                                                  *")
-print("* 2 [user_handle] => Get rating change for a user's last contest   *")
-print("* Example :  2 Noobmaster69                                        *")
-print("*                                                                  *")
-print("* 3 [user_handle1  user_handle2 ......] => Get data about users    *")
-print("* Example :  3 Noobmaster69 HAMMERTHOR RABBIT                      *")
-print("*                                                                  *")
-print("* 4 [contest_id] [user_handle1  user_handle2...] => Get ranklist   *")
-print("* Example :  4 Noobmaster69 HAMMERTHOR RABBIT                      *")
-print("*                                                                  *")
-print("****************************************************************** *")
+client = discord.Client()
 
-while(True):
-    inp = input().split()
-    if(inp[0] == '1'):
-        contestList()
-    elif(inp[0]=='2' and len(inp)==2):
-        ratingchange(inp[1])
-    elif(inp[0]=='3'):
-        userInfo(inp[1:]) 
-    elif(inp[0]=='4'):
-        ranklist(inp[1],inp[2:])       
-    else:
-        pass    
+@client.event
+async def on_ready():
+    print('We have logged in as {0.user}'.format(client))
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+    try:
+        if message.content.startswith('$contests'):
+            msg = contestList()
+            await message.channel.send(msg)
+        elif message.content.startswith('$rating'):
+            msg = message.content.split()
+            res = ratingChange(msg[1])
+            await message.channel.send(res)
+        elif message.content.startswith('$user'):
+            msg = message.content.split()
+            res = userInfo(msg[1:])
+            await message.channel.send(res)
+        elif message.content.startswith('$ranklist'):
+            msg = message.content.split()
+            res = ranklist(msg[1] , msg[2:])
+            await message.channel.send(res)            
+    except:
+        await message.channel.send('Sorry, there is some error in your syntax') 
+
+load_dotenv()
+client.run(os.getenv("TOKEN"))
+
+    ####################################################################################################
+  ########################################################################################################
+############################################################################################################
+  ########################################################################################################
+    ####################################################################################################
