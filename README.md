@@ -27,3 +27,6 @@ $ccuser [userhandle]
 
 Displays user details(star , rating , maxrating etc of the given user)
 #
+
+NOTE:
+The bot would check for present and upcoming contests (in both codeforces and codechef) every 24 hours and notify the server members(probably at 00:00:00 for that day)
