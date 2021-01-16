@@ -30,3 +30,33 @@ def ccContestList():
     return s    
 
 ####################################################################################################
+
+def ccUserInfo(handle):
+    try:
+        req = 'https://www.codechef.com/users/'+str(handle)
+        fhand = requests.get(req).content
+        soup = BeautifulSoup(fhand,'lxml')
+        s = '\n'
+        s = s +  '==================================' 
+        info = soup.find_all("div",{"class":"user-details-container plr10"})
+        if(len(str(info)) < 1):
+            return "== No user found ==\n"
+        else:
+            name = soup.find("div",{"class":"user-details-container plr10"}).find_all("header")
+            name = name[0].find_all("h2")
+            s = s + 'User Name          : ' + str(name[0].text + '\n')
+            rating = soup.find_all("div",{"class":"rating-number"})
+            s = s + 'Current Rating     : ' + str(rating[0].text) + '\n'
+
+            star = soup.find_all("div",{"class":"rating-star"})
+            st = 0
+            for data in star[0].find_all('span'):
+                st += 1
+            s = s + 'Current stars      : ' + str(st) + '\n'  
+            s = s +  '=================================='   
+            s = s + '\n'
+            return s
+    except:
+        return "== No user found ==\n"
+
+####################################################################################################

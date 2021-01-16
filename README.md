@@ -5,21 +5,25 @@ A discord bot to get information about upcoming contests and view rating changes
 ###
 COMMAND LIST:
 #
-$contests             
+$cfcontests             
 Displays a list of upcoming contests
 #
-$rating [userhandle]  
+$cfrating [userhandle]  
 
 Displays rating change for the last round of the given user
 #
-$user [userhandle1] [userhandle2] [userhandle3]......
+$cfuser [userhandle1] [userhandle2] [userhandle3]......
 
 Displays user details(rank , rating , maxrating etc of the given users)
 #
-$ranklist [contestid] [userhandle1] [userhandle2] [userhandle3].....
+$cfranklist [contestid] [userhandle1] [userhandle2] [userhandle3].....
 
 Displays a custom ranklist using the given users
 #
 $cccontests             
 Displays a list of upcoming contests on codechef
+#
+$ccuser [userhandle] 
+
+Displays user details(star , rating , maxrating etc of the given user)
 #
