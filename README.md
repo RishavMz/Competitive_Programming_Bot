@@ -21,7 +21,7 @@ $cfranklist [contestid] [userhandle1] [userhandle2] [userhandle3].....
 Displays a custom ranklist using the given users on codeforces
 #
 $cccontests             
-Displays a list of upcoming contests on codechef
+Displays a list of upcoming rated contests on codechef
 #
 $ccuser [userhandle] 
 
@@ -35,4 +35,7 @@ $stopbotnotifier
 
 Turn off the timed message feature which repeats every 24 hours.
 #
+$help
+
+Get command list
 #

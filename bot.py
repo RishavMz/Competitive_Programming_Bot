@@ -7,6 +7,29 @@ from discord.ext import commands, tasks
 
 ####################################################################################################
 
+helpmessage = '\n\n=====================\n'
+helpmessage = helpmessage + '    COMMAND LIST\n'
+helpmessage = helpmessage + '\n\n=====================\n'
+helpmessage = helpmessage + '$cfcontests \n'
+helpmessage = helpmessage + 'Displays a list of upcoming contests on codeforces \n\n'
+helpmessage = helpmessage + '$cfrating [userhandle] \n'
+helpmessage = helpmessage + 'Displays rating change for the last round of the given user on codeforces \n\n'
+helpmessage = helpmessage + '$cfuser [userhandle1] [userhandle2]......\n'
+helpmessage = helpmessage + 'Displays user details(rank , rating , maxrating etc of the given users) on codeforces \n\n'
+helpmessage = helpmessage + '$cfranklist [contestid] [userhandle1] [userhandle2].... \n'
+helpmessage = helpmessage + 'Displays a custom ranklist using the given users on codeforces \n\n'
+helpmessage = helpmessage + '$cccontests \n'
+helpmessage = helpmessage + 'Displays a list of upcoming rated contests on codechef \n\n'
+helpmessage = helpmessage + '$ccuser [userhandle] \n'
+helpmessage = helpmessage + 'Displays user details(star , rating , maxrating etc of the given user) on codechef \n\n'
+helpmessage = helpmessage + '$startbotnotifier \n'
+helpmessage = helpmessage + 'The bot would check for present and upcoming contests (in both codeforces and codechef) every 24 hours and notify the server members(starting from the moment this command is given)\n\n'
+helpmessage = helpmessage + '$stopbotnotifier \n'
+helpmessage = helpmessage + 'Turn off the timed message feature which repeats every 24 hours. \n\n'
+helpmessage = helpmessage + '$help \n'
+helpmessage = helpmessage + '$Get command list\n.\n\n\n\n'
+
+
 client = discord.Client()                           #initializing bot
 loop = 0
 @tasks.loop(hours=24)                               # Loop runs every 24 hours 
@@ -54,6 +77,9 @@ async def on_message(message):                      #check if message recieved(r
             msg = message.content.split()
             res = ccUserInfo(msg[1])
             await message.channel.send(res)
+
+        elif message.content.startswith('$help'):
+            await message.channel.send(helpmessage)    
 
         elif message.content.startswith('$startbotnotifier'):   
             if loop == 0 :    
