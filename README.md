@@ -2,6 +2,8 @@
 
 A discord bot to get information about upcoming contests and view rating changes along with custom ranklists in competitive programming websites(codeforces and codechef only as of now)
 
+https://discord.gg/K7Tz6QYgkH
+
 ###
 COMMAND LIST:
 #
