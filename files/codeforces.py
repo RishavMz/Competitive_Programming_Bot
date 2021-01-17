@@ -35,14 +35,20 @@ def cfContestList():
                         contests.append(data)
                 st = ''
                 st = st+"=== UPCOMING + PRESENT CONTESTS ON CODEFORCES ===\n"
+                tm = datetime.timestamp(datetime.now())
+                count = 0
                 for data in contests:
                     time = data['startTimeSeconds'] 
-                    st = st + "==================================\n"
-                    st = st + "Contest ID   : "+str(data['id'])+"\n"
-                    st = st + "Contest Name : "+str(data['name'])+"\n"
-                    st = st + "Start Time   : "+timeConvert(time)+"\n"
-                    st = st + "End Time     : "+timeConvert(time + data['durationSeconds'])+"\n"
-                    st = st + "==================================\n\n" 
+                    if(int(time-tm) <= 259200):
+                        count += 1
+                        st = st + "==================================\n"
+                        st = st + "Contest ID   : "+str(data['id'])+"\n"
+                        st = st + "Contest Name : "+str(data['name'])+"\n"
+                        st = st + "Start Time   : "+timeConvert(time)+"\n"
+                        st = st + "End Time     : "+timeConvert(time + data['durationSeconds'])+"\n"
+                        st = st + "==================================\n\n" 
+                    if(count == 0):
+                        return '====\nNo event today or tomorrow\n====\n'    
                 return st
             else:
                 return "===No Contest in near future. Please check again later.==="        
