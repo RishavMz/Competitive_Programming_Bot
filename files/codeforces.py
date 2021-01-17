@@ -6,6 +6,23 @@ from datetime import datetime
 
 ####################################################################################################
 
+def timeConvert(date):                                              # Convert from GMT to UTC(+5:30)
+    date = str(datetime.utcfromtimestamp(date)).split()
+    dat = date[0].split('-')
+    modify = date[1].split(':')
+    modify[0] = int(modify[0])+5
+    modify[1] = int(modify[1]) + 30
+    if(modify[1]>=60):
+        modify[0] = str(modify[0] + modify[1] // 60)
+        modify[1] = str(modify[1] % 60)
+        if len(modify[0]) == 1 :
+            modify[0] = '0'+modify[0]
+        if len(modify[1]) == 1 :
+            modify[1] = '0'+modify[1]    
+    strdate = str(dat[2]) + '-' + str(dat[1]) + '-' + str(dat[0]) + '  '+ str(modify[0]) + ':' + str(modify[1]) + ':' + str(modify[2]); 
+    return strdate
+
+####################################################################################################
 def cfContestList():
     fhand = urllib.request.urlopen('https://codeforces.com/api/contest.list').read().decode()
     try:
@@ -19,13 +36,13 @@ def cfContestList():
                 st = ''
                 st = st+"=== UPCOMING + PRESENT CONTESTS ON CODEFORCES ===\n"
                 for data in contests:
-                    time = data['startTimeSeconds']
+                    time = data['startTimeSeconds'] 
                     st = st + "==================================\n"
                     st = st + "Contest ID   : "+str(data['id'])+"\n"
                     st = st + "Contest Name : "+str(data['name'])+"\n"
-                    st = st + "Start Time   : "+str( datetime.utcfromtimestamp(time))+"\n"
-                    st = st + "End Time     : "+str(datetime.utcfromtimestamp(time + data['durationSeconds']))+"\n"
-                    st = st + "==================================\n" 
+                    st = st + "Start Time   : "+timeConvert(time)+"\n"
+                    st = st + "End Time     : "+timeConvert(time + data['durationSeconds'])+"\n"
+                    st = st + "==================================\n\n" 
                 return st
             else:
                 return "===No Contest in near future. Please check again later.==="        
@@ -97,3 +114,5 @@ def cfRanklist(contestid , competitors):
         return "====Failed to load data===="         
 
 ####################################################################################################
+
+

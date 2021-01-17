@@ -11,8 +11,8 @@ def ccContestList():
 
     tables = soup.find_all("table",{"class":"dataTable"})
     present = tables[0].find("tbody").find_all("tr")
-    s = '====================================='
-    s = s + '\n\n=== PRESENT CONTESTS ===\n'
+    s = '\n\n=================================='
+    s = s + '\n\n=== CODECHEF PRESENT CONTESTS ===\n'
     for data in present:
         detail = data.find_all("td")
         s = s + 'Contest Name   : '+str(detail[1].text).lstrip()
@@ -20,13 +20,13 @@ def ccContestList():
         s = s + 'End time       : '+str(detail[3].text)+'\n\n'
     s = s + '\n\n'
     future = tables[1].find("tbody").find_all("tr")
-    s = '\n\n=== FUTURE CONTESTS ===\n'
+    s = '\n\n=== CODECHEF FUTURE CONTESTS ===\n'
     for data in future:
         detail = data.find_all("td")
         s = s + 'Contest Name   : '+str(detail[1].text).lstrip()
         s = s + 'Start time     : '+str(detail[2].text)+'\n'
         s = s + 'End time       : '+str(detail[3].text)+'\n\n'    
-    s = s +  '====================================='    
+    s = s +  '==================================\n\n'    
     return s    
 
 ####################################################################################################
@@ -37,7 +37,7 @@ def ccUserInfo(handle):
         fhand = requests.get(req).content
         soup = BeautifulSoup(fhand,'lxml')
         s = '\n'
-        s = s +  '==================================' 
+        s = s +  '===============================' 
         info = soup.find_all("div",{"class":"user-details-container plr10"})
         if(len(str(info)) < 1):
             return "== No user found ==\n"

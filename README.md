@@ -27,6 +27,10 @@ $ccuser [userhandle]
 
 Displays user details(star , rating , maxrating etc of the given user)
 #
-
-NOTE:
-The bot would check for present and upcoming contests (in both codeforces and codechef) every 24 hours and notify the server members(probably at 00:00:00 for that day)
+$startbotnotifier
+The bot would check for present and upcoming contests (in both codeforces and codechef) every 24 hours and notify the server members(starting from the moment this command is given)
+# 
+$stopbotnotifier
+Turn off the timed message feature which repeats every 24 hours.
+#
+#
