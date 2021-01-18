@@ -29,9 +29,13 @@ helpmessage = helpmessage + 'Turn off the timed message feature which repeats ev
 helpmessage = helpmessage + '$help \n'
 helpmessage = helpmessage + '$Get command list\n.\n\n\n\n'
 
+######################################################################################################
 
 client = discord.Client()                           #initializing bot
+
 loop = 0
+
+
 @tasks.loop(hours=24)                               # Loop runs every 24 hours 
 async def called_once_a_day(message):               # Sets remainder about upcoming contests
     msg1 = cfContestList()
