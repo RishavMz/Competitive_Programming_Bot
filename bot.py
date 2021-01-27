@@ -27,6 +27,14 @@ helpmessage = helpmessage + 'The bot would check for present and upcoming contes
 helpmessage = helpmessage + '$stopbotnotifier \n'
 helpmessage = helpmessage + 'Turn off the timed message feature which repeats every 24 hours. \n\n'
 helpmessage = helpmessage + '$help \n'
+helpmessage = helpmessage + '$ccdbusers  \n'
+helpmessage = helpmessage + 'Displays a ranklist from users whose handles are stored in database(for codechef) \n\n'
+helpmessage = helpmessage + '$ccdbadd [userhandle] \n'
+helpmessage = helpmessage + 'Adds the user with given handle(username) to the database(for codechef) \n'
+helpmessage = helpmessage + '$cfdbusers  \n'
+helpmessage = helpmessage + 'Displays a ranklist from users whose handles are stored in database(for codeforces) \n\n'
+helpmessage = helpmessage + '$cfdbadd [userhandle] \n'
+helpmessage = helpmessage + 'Adds the user with given handle(username) to the database(for codeforces) \n'
 helpmessage = helpmessage + '$Get command list\n.\n\n\n\n'
 
 ######################################################################################################
@@ -43,6 +51,8 @@ async def called_once_a_day(message):               # Sets remainder about upcom
     await message.channel.send("=\n=\n=_=\n=\n=")
     msg2 = ccContestList()
     await message.channel.send(msg2)
+    ccUpdateDatabase()
+    cfUpdateDatabase()
 
 @client.event
 async def on_ready():                               #check if bot loaded(ready)
@@ -97,7 +107,20 @@ async def on_message(message):                      #check if message recieved(r
                 loop = 0
                 called_once_a_day.stop()
             else:
-                await message.channel.send('This feature cannot be disabled as it has not been enabled yet :D')      
+                await message.channel.send('This feature cannot be disabled as it has not been enabled yet :D')
+
+        elif message.content.startswith('$ccdbusers'):
+            res = ccGetUsersFromDatabase())
+            await message.channel.send(res)
+
+        elif message.content.startswith('$cfdbusers'):
+            res = cfGetUsersFromDatabase())
+            await message.channel.send(res)
+
+        elif message.content.startswith('$cfdbadd'):
+            msg = message.content.split()
+            res = cfAddUser(msg[1])
+            await message.channel.send(res)                    
 
     except:
         await message.channel.send('Sorry, there is some error in your syntax') 

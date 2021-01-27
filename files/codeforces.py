@@ -2,9 +2,13 @@ import os
 import urllib.request , urllib.parse, urllib.error
 import json
 from datetime import datetime
-
+import time
+import sqlite3
 
 ####################################################################################################
+
+
+#################   Utility function to obtain time in required format
 
 def timeConvert(date):                                              # Convert from GMT to UTC(+5:30)
     date = str(datetime.utcfromtimestamp(date)).split()
@@ -22,7 +26,8 @@ def timeConvert(date):                                              # Convert fr
     strdate = str(dat[2]) + '-' + str(dat[1]) + '-' + str(dat[0]) + '  '+ str(modify[0]) + ':' + str(modify[1]) + ':' + str(modify[2]); 
     return strdate
 
-####################################################################################################
+################# Displays list of present and upcoming contests
+
 def cfContestList():
     fhand = urllib.request.urlopen('https://codeforces.com/api/contest.list').read().decode()
     try:
@@ -55,7 +60,7 @@ def cfContestList():
     except:
         return '====Failed to load data===='
 
-###########################################################################################################
+#################   Displays the change in rating for a  given user
 
 def cfRatingChange(handle):
     handle = urllib.request.urlopen('https://codeforces.com/api/user.rating?handle='+handle)
@@ -74,7 +79,7 @@ def cfRatingChange(handle):
     except:
         return "====Failed to load data===="
 
-##################################################################################################################
+#################   Displays details about a given user
 
 def cfUserInfo(li):
     s = ';'.join(li)
@@ -95,7 +100,8 @@ def cfUserInfo(li):
             return st    
     except:
         return "====Failed to load data===="   
-#############################################################################################################
+
+#################   Displays a custom ranklist with the provided users
 
 def cfRanklist(contestid , competitors):
     ranklist = []
@@ -119,6 +125,79 @@ def cfRanklist(contestid , competitors):
     except:
         return "====Failed to load data===="         
 
-####################################################################################################
 
 
+###################################################################################################
+#######################        Database Functionality               ###############################
+###################################################################################################
+
+conn = sqlite3.connect('database/COMPPROG.db')
+cur = conn.cursor()
+
+cur.execute("CREATE TABLE IF NOT EXISTS CODEFORCES(ID INTEGER AUTO_INCREMENT PRIMARY KEY , HANDLE VARCHAR(50) UNIQUE , RATING INTEGER, MAXRATING INTEGER)")
+
+################    Shows all user details (handle and rating) as a ranklist
+
+def cfGetUsersFromDatabase():
+    cur.execute("SELECT HANDLE,RATING FROM CODEFORCES ORDER BY RATING DESC")
+    rows = cur.fetchall()
+    if(len(rows)==0):
+        return "\nNo Records"
+    s = "\n"
+    rank = 1
+    for row in rows:
+        s+= str(rank) + "    "+str(row[0]) +"    "+ str(row[1])+'\n'
+        rank += 1
+    return s    
+
+#################   Checks if user details already present in database
+
+def cfSearchDatabase(handle):
+    cur.execute("SELECT * FROM CODEFORCES WHERE HANDLE = ? ",(handle,))
+    row = cur.fetchone()
+    if row is None:
+        return 0
+    else:
+        return 1    
+
+#################   Adds details of a new user into the database
+
+def cfAddUser(handle):
+    try:
+        if(cfSearchDatabase(handle)):
+            return "== User already added to database =="
+        handle = urllib.request.urlopen('https://codeforces.com/api/user.info?handles='+handle)
+        fhand = handle.read().decode()
+        js = json.loads(fhand)
+        if(js['status']=='OK'):
+            if(len(js['result'])==0):
+                return "== No user found ==\n"
+            for data in js['result'] :
+                cur.execute("INSERT INTO CODEFORCES (HANDLE, RATING, MAXRATING) VALUES (? , ? , ? )",(data['handle'],data['rating'],data['maxRating'],))
+                conn.commit()
+                return "User successfully added to database"
+        else:
+            return "API request limit exceeded. Please wait for some time before making another request"  
+    except:
+        return "== No user found ==\n"
+
+#################   Updates the data from database
+
+def cfUpdateDatabase():
+    cur.execute("SELECT * FROM CODEFORCES")
+    rows = cur.fetchall()
+    for row in rows:
+        time.sleep(2)
+        handle = urllib.request.urlopen('https://codeforces.com/api/user.info?handles='+str(row[1]))
+        fhand = handle.read().decode()
+        try:
+            js = json.loads(fhand)
+            if(js['status']=='OK'):
+                for data in js['result'] :
+                    cur.execute("UPDATE CODEFORCES SET RATING = ? , MAXRATING = ? WHERE ID = ",(data['rating'],data['maxRating'],row[0],))
+                    conn.commit()
+                    return "User successfully added to database"
+            else:
+                return "API request limit exceeded. Please wait for some time before making another request"  
+        except:
+            return "== No user found ==\n"
