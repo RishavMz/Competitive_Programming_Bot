@@ -110,11 +110,11 @@ async def on_message(message):                      #check if message recieved(r
                 await message.channel.send('This feature cannot be disabled as it has not been enabled yet :D')
 
         elif message.content.startswith('$ccdbusers'):
-            res = ccGetUsersFromDatabase())
+            res = ccGetUsersFromDatabase()
             await message.channel.send(res)
 
         elif message.content.startswith('$cfdbusers'):
-            res = cfGetUsersFromDatabase())
+            res = cfGetUsersFromDatabase()
             await message.channel.send(res)
 
         elif message.content.startswith('$cfdbadd'):

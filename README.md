@@ -3,9 +3,7 @@
 A discord bot to get information about upcoming contests and view rating changes along with custom ranklists in competitive programming websites(codeforces and codechef only as of now)
 #
 # 
-Test the bot here:
-
-https://discord.gg/K7Tz6QYgkH
+Run database/batabase.bat file before running bot.py
 
 ###
 
