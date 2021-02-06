@@ -100,10 +100,7 @@ async def on_message(message):                      #check if message recieved(r
             await embed(message.channel,res)
 
         elif message.content.startswith('$help'):
-            await embed(message.channel,helpmessage)   
-
-        elif message.content.startswith('.help'):
-            await embed(message.channel,helpmessage)        
+            await embed(message.channel,helpmessage)           
 
         elif message.content.startswith('$startbotnotifier'):   
             if loop == 0 :    
