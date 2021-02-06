@@ -56,3 +56,16 @@ How this bot is made:
     $help
     Get command list
 
+Note: The following commands are working locally when run on my device, but I am unable to configure SQLITE database properly on deployment and hence the current deployed version do not support these commands(But available when deployed locally)
+
+        $ccdbusers  
+        Displays a ranklist from users whose handles are stored in database(for codechef) 
+
+        $ccdbadd [userhandle] 
+        Adds the user with given handle(username) to the database(for codechef) 
+
+        $cfdbusers  
+        Displays a ranklist from users whose handles are stored in database(for codeforces) 
+
+        $cfdbadd [userhandle] 
+        Adds the user with given handle(username) to the database(for codeforces)  
