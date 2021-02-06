@@ -1,15 +1,18 @@
 import discord
 import os
 from dotenv import load_dotenv
+os.system('sqlite3 COMPROG.db')
 from files.codeforces import *
 from files.codechef import *
 from discord.ext import commands, tasks
+from discord.ext.commands import Bot
+
 
 ####################################################################################################
 
-helpmessage = '\n\n=====================\n'
+helpmessage = '\n\n===================\n'
 helpmessage = helpmessage + '    COMMAND LIST\n'
-helpmessage = helpmessage + '\n\n=====================\n'
+helpmessage = helpmessage + '\n\n===================\n'
 helpmessage = helpmessage + '$cfcontests \n'
 helpmessage = helpmessage + 'Displays a list of upcoming contests on codeforces \n\n'
 helpmessage = helpmessage + '$cfrating [userhandle] \n'
@@ -35,7 +38,7 @@ helpmessage = helpmessage + '$cfdbusers  \n'
 helpmessage = helpmessage + 'Displays a ranklist from users whose handles are stored in database(for codeforces) \n\n'
 helpmessage = helpmessage + '$cfdbadd [userhandle] \n'
 helpmessage = helpmessage + 'Adds the user with given handle(username) to the database(for codeforces) \n'
-helpmessage = helpmessage + '$Get command list\n.\n\n\n\n'
+helpmessage = helpmessage + 'Get command list\n.\n\n\n\n'
 
 ######################################################################################################
 
@@ -47,12 +50,16 @@ loop = 0
 @tasks.loop(hours=24)                               # Loop runs every 24 hours 
 async def called_once_a_day(message):               # Sets remainder about upcoming contests
     msg1 = cfContestList()
-    await message.channel.send(msg1)
-    await message.channel.send("=\n=\n=_=\n=\n=")
     msg2 = ccContestList()
-    await message.channel.send(msg2)
+    await embed(message.channel,(msg1+"\n.\n.\n.\n.\n."+msg2))
     ccUpdateDatabase()
     cfUpdateDatabase()
+
+bot = Bot("!")
+@bot.command()
+async def embed(channel,text):
+    embed=discord.Embed( description=text, color=discord.Color.blue())
+    await channel.send(embed=embed)
 
 @client.event
 async def on_ready():                               #check if bot loaded(ready)
@@ -66,48 +73,51 @@ async def on_message(message):                      #check if message recieved(r
     try:
         if message.content.startswith('$cfcontests'):   #Following command list
             msg = cfContestList()
-            await message.channel.send(msg)
+            await embed(message.channel,msg)
 
         elif message.content.startswith('$cfrating'):
             msg = message.content.split()
             res = cfRatingChange(msg[1])
-            await message.channel.send(res)
+            await embed(message.channel,res)
 
         elif message.content.startswith('$cfuser'):
             msg = message.content.split()
             res = cfUserInfo(msg[1:])
-            await message.channel.send(res)
+            await embed(message.channel,res)
 
         elif message.content.startswith('$cfranklist'):
             msg = message.content.split()
             res = cfRanklist(msg[1] , msg[2:])
-            await message.channel.send(res)  
+            await embed(message.channel,res)  
 
         elif message.content.startswith('$cccontests'):
             msg = ccContestList()
-            await message.channel.send(msg) 
+            await embed(message.channel,msg)
 
         elif message.content.startswith('$ccuser'):
             msg = message.content.split()
             res = ccUserInfo(msg[1])
-            await message.channel.send(res)
+            await embed(message.channel,res)
 
         elif message.content.startswith('$help'):
-            await message.channel.send(helpmessage)    
+            await embed(message.channel,helpmessage)   
+
+        elif message.content.startswith('.help'):
+            await embed(message.channel,helpmessage)        
 
         elif message.content.startswith('$startbotnotifier'):   
             if loop == 0 :    
                 loop = 1             
                 called_once_a_day.start(message) 
             else:
-                await message.channel.send('Notifier is already set for this server') 
+                await embed(message.channel,'Notifier already set for this channel') 
 
         elif message.content.startswith('$stopbotnotifier'):
             if(loop == 1):
                 loop = 0
                 called_once_a_day.stop()
             else:
-                await message.channel.send('This feature cannot be disabled as it has not been enabled yet :D')
+                await embed(message.channel,'This feature cannot be disabled as it has not been enabled')
 
         elif message.content.startswith('$ccdbusers'):
             res = ccGetUsersFromDatabase()

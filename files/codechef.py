@@ -41,16 +41,18 @@ def ccContestList():
 
     tables = soup.find_all("table",{"class":"dataTable"})
     present = tables[0].find("tbody").find_all("tr")
-    s = '\n\n=================================='
-    s = s + '\n\n=== CODECHEF PRESENT CONTESTS ===\n'
+    s = '\n\n============================'
+    s = s + '\n\n= CODECHEF PRESENT CONTESTS =\n'
     for data in present:
         detail = data.find_all("td")
-        s = s + 'Contest Name   : '+str(detail[1].text).lstrip()
-        s = s + 'Start time     : '+str(detail[2].text)+'\n'
-        s = s + 'End time       : '+str(detail[3].text)+'\n\n'
-    s = s + '\n\n'
+        sj = str(detail[1].text).lstrip()
+        if cckeywordAI(sj):
+            s = s + 'Contest Name   : '+str(detail[1].text).lstrip()
+            s = s + 'Start time     : '+str(detail[2].text)+'\n'
+            s = s + 'End time       : '+str(detail[3].text)+'\n\n'    
+    s = s +  '=============================\n\n'    
     future = tables[1].find("tbody").find_all("tr")
-    s = '\n\n=== CODECHEF FUTURE CONTESTS ===\n'
+    s = s + '\n\n= CODECHEF FUTURE CONTESTS =\n'
     for data in future:
         detail = data.find_all("td")
         sj = str(detail[1].text).lstrip()
@@ -58,7 +60,7 @@ def ccContestList():
             s = s + 'Contest Name   : '+str(detail[1].text).lstrip()
             s = s + 'Start time     : '+str(detail[2].text)+'\n'
             s = s + 'End time       : '+str(detail[3].text)+'\n\n'    
-    s = s +  '==================================\n\n'    
+    s = s +  '=============================\n\n'    
     return s    
 
 #################   Shows information about a user
@@ -69,7 +71,7 @@ def ccUserInfo(handle):
         fhand = requests.get(req).content
         soup = BeautifulSoup(fhand,'lxml')
         s = '\n'
-        s = s +  '===============================\n' 
+        s = s +  '==========================\n' 
         info = soup.find_all("div",{"class":"user-details-container plr10"})
         if(len(str(info)) < 1):
             return "== No user found ==\n"
@@ -85,7 +87,7 @@ def ccUserInfo(handle):
             for data in star[0].find_all('span'):
                 st += 1
             s = s + 'Current stars      : ' + str(st) + '\n'  
-            s = s +  '=================================='   
+            s = s +  '============================='   
             s = s + '\n'
             return s
     except:
@@ -168,3 +170,4 @@ def ccUpdateDatabase():
             vrating = int(rating[0].text)
             cur.execute("UPDATE CODECHEF SET NAME = ? , RATING = ?  WHERE ID = ?",(vname, vrating,row[0],))
             conn.commit()    
+
