@@ -106,7 +106,7 @@ DATABASE_URL = environ.get('DATABASE_URL')
 conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 print("Database opened successfully")
 cur = conn.cursor()
-cur.execute("CREATE TABLE IF NOT EXISTS CODECHEF(ID INTEGER AUTO_INCREMENT PRIMARY KEY ,SERVER INTEGER , HANDLE VARCHAR(50) UNIQUE , NAME VARCHAR(50) , RATING INTEGER)")
+cur.execute("CREATE TABLE IF NOT EXISTS CODECHEF(ID SERIAL PRIMARY KEY ,SERVER INTEGER , HANDLE VARCHAR(50) UNIQUE , NAME VARCHAR(50) , RATING INTEGER)")
 
 ################    Shows all user details (handle and rating) as a ranklist
 
