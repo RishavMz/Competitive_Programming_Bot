@@ -3,7 +3,10 @@ import urllib.request , urllib.parse, urllib.error
 import json
 from datetime import datetime
 import time
-import sqlite3
+import psycopg2
+from os import environ
+
+
 
 ####################################################################################################
 
@@ -131,15 +134,19 @@ def cfRanklist(contestid , competitors):
 #######################        Database Functionality               ###############################
 ###################################################################################################
 
-conn = sqlite3.connect('database/COMPPROG.db')
+DATABASE_URL = environ.get('DATABASE_URL')
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+print("Database opened successfully")
+
 cur = conn.cursor()
 
-cur.execute("CREATE TABLE IF NOT EXISTS CODEFORCES(ID INTEGER AUTO_INCREMENT PRIMARY KEY , HANDLE VARCHAR(50) UNIQUE , RATING INTEGER, MAXRATING INTEGER)")
+cur.execute("CREATE TABLE IF NOT EXISTS CODEFORCES(ID INTEGER AUTO_INCREMENT PRIMARY KEY ,SERVER INTEGER, HANDLE VARCHAR(50) UNIQUE , RATING INTEGER, MAXRATING INTEGER)")
 
 ################    Shows all user details (handle and rating) as a ranklist
 
-def cfGetUsersFromDatabase():
-    cur.execute("SELECT HANDLE,RATING FROM CODEFORCES ORDER BY RATING DESC")
+def cfGetUsersFromDatabase(server):
+    cur.execute("SELECT HANDLE,RATING FROM CODEFORCES ORDER BY RATING DESC WHERE SERVER =?",(server,))
     rows = cur.fetchall()
     if(len(rows)==0):
         return "\nNo Records"
@@ -152,8 +159,8 @@ def cfGetUsersFromDatabase():
 
 #################   Checks if user details already present in database
 
-def cfSearchDatabase(handle):
-    cur.execute("SELECT * FROM CODEFORCES WHERE HANDLE = ? ",(handle,))
+def cfSearchDatabase(handle,server):
+    cur.execute("SELECT * FROM CODEFORCES WHERE HANDLE = ? AND SERVER=? ",(handle,server,))
     row = cur.fetchone()
     if row is None:
         return 0
@@ -162,9 +169,9 @@ def cfSearchDatabase(handle):
 
 #################   Adds details of a new user into the database
 
-def cfAddUser(handle):
+def cfAddUser(handle,server):
     try:
-        if(cfSearchDatabase(handle)):
+        if(cfSearchDatabase(handle,server)):
             return "== User already added to database =="
         handle = urllib.request.urlopen('https://codeforces.com/api/user.info?handles='+handle)
         fhand = handle.read().decode()
@@ -173,7 +180,7 @@ def cfAddUser(handle):
             if(len(js['result'])==0):
                 return "== No user found ==\n"
             for data in js['result'] :
-                cur.execute("INSERT INTO CODEFORCES (HANDLE, RATING, MAXRATING) VALUES (? , ? , ? )",(data['handle'],data['rating'],data['maxRating'],))
+                cur.execute("INSERT INTO CODEFORCES (SERVER,HANDLE, RATING, MAXRATING) VALUES (?, ? , ? , ? )",(server,data['handle'],data['rating'],data['maxRating'],))
                 conn.commit()
                 return "User successfully added to database"
         else:

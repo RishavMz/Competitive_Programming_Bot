@@ -12,60 +12,58 @@ How this bot is made:
         Codeforces data : Codeforces API
         Codeforces data : Web scrapping using beautifulsoup
         Discord         : Discord.py module
-        Database        : sqlite3
+        Database        : PostgreSQL
 
 ###
     COMMAND LIST:
 
-    $ccdbusers 
+    $$ccdbusers 
     Displays a ranklist from users whose handles are stored in database(for codechef)
 
-    $ccdbadd [userhandle]  
+    $$ccdbadd [userhandle]  
     Adds the user with given handle(username) to the database(for codechef)
 
-    $cfdbusers 
+    $$cfdbusers 
     Displays a ranklist from users whose handles are stored in database(for codeforces)
 
-    $cfdbadd [userhandle]  
+    $$cfdbadd [userhandle]  
     Adds the user with given handle(username) to the database (for codeforces)      
 
-    $cfcontests             
+    $$cfcontests             
     Displays a list of upcoming contests on codeforces
 
-    $cfrating [userhandle]  
+    $$cfrating [userhandle]  
     Displays rating change for the last round of the given user on codeforces
 
-    $cfuser [userhandle1] [userhandle2] [userhandle3]......
+    $$cfuser [userhandle1] [userhandle2] [userhandle3]......
     Displays user details(rank , rating , maxrating etc of the given users) on codeforces
 
-    $cfranklist [contestid] [userhandle1] [userhandle2] [userhandle3].....
+    $$cfranklist [contestid] [userhandle1] [userhandle2] [userhandle3].....
     Displays a custom ranklist using the given users on codeforces
 
-    $cccontests             
+    $$cccontests             
     Displays a list of upcoming rated contests on codechef
 
-    $ccuser [userhandle] 
+    $$ccuser [userhandle] 
     Displays user details(star , rating , maxrating etc of the given user) on codechef
 
-    $startbotnotifier
+    $$startbotnotifier
     The bot would check for present and upcoming contests (in both codeforces and codechef) every 24 hours and notify the server membe  (starting from the moment this command is given)
 
-    $stopbotnotifier
+    $$stopbotnotifier
     Turn off the timed message feature which repeats every 24 hours.
 
-    $help
+    $$help
     Get command list
 
-Note: The following commands are working locally when run on my device, but I am unable to configure SQLITE database properly on deployment and hence the current deployed version do not support these commands(But available when deployed locally)
+    $ccdbusers  
+    Displays a ranklist from users whose handles are stored in database(for codechef) 
 
-        $ccdbusers  
-        Displays a ranklist from users whose handles are stored in database(for codechef) 
+    $$ccdbadd [userhandle] 
+    Adds the user with given handle(username) to the database(for codechef) 
 
-        $ccdbadd [userhandle] 
-        Adds the user with given handle(username) to the database(for codechef) 
-
-        $cfdbusers  
-        Displays a ranklist from users whose handles are stored in database(for codeforces) 
-
-        $cfdbadd [userhandle] 
-        Adds the user with given handle(username) to the database(for codeforces)  
+    $$cfdbusers  
+    Displays a ranklist from users whose handles are stored in database(for codeforces) 
+    
+    $$cfdbadd [userhandle] 
+    Adds the user with given handle(username) to the database(for codeforces)  

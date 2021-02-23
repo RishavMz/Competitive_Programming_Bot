@@ -1,8 +1,11 @@
 import requests
 import urllib.error , urllib.parse , urllib.request
 from bs4 import BeautifulSoup
-import sqlite3
+import psycopg2
 import time
+from os import environ
+
+
 
 
 ####################################################################################################
@@ -98,15 +101,17 @@ def ccUserInfo(handle):
 #######################        Database Functionality               ###############################
 ###################################################################################################
 
-conn = sqlite3.connect('database/COMPPROG.db')
-cur = conn.cursor()
+DATABASE_URL = environ.get('DATABASE_URL')
 
-cur.execute("CREATE TABLE IF NOT EXISTS CODECHEF(ID INTEGER AUTO_INCREMENT PRIMARY KEY , HANDLE VARCHAR(50) UNIQUE , NAME VARCHAR(50) , RATING INTEGER)")
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+print("Database opened successfully")
+cur = conn.cursor()
+cur.execute("CREATE TABLE IF NOT EXISTS CODECHEF(ID INTEGER AUTO_INCREMENT PRIMARY KEY ,SERVER INTEGER , HANDLE VARCHAR(50) UNIQUE , NAME VARCHAR(50) , RATING INTEGER)")
 
 ################    Shows all user details (handle and rating) as a ranklist
 
-def ccGetUsersFromDatabase():
-    cur.execute("SELECT HANDLE,RATING FROM CODECHEF ORDER BY RATING DESC")
+def ccGetUsersFromDatabase(server):
+    cur.execute("SELECT HANDLE,RATING FROM CODECHEF ORDER BY RATING DESC WHERE SERVER=?",(server,))
     rows = cur.fetchall()
     s = "\n"
     rank = 1
@@ -117,8 +122,8 @@ def ccGetUsersFromDatabase():
 
 #################   Checks if user details already present in database
 
-def ccSearchDatabase(handle):
-    cur.execute("SELECT * FROM CODECHEF WHERE HANDLE = ? ",(handle,))
+def ccSearchDatabase(handle,server):
+    cur.execute("SELECT * FROM CODECHEF WHERE HANDLE = ? AND SERVER=?",(handle,server,))
     row = cur.fetchone()
     if row is None:
         return 0
@@ -127,9 +132,9 @@ def ccSearchDatabase(handle):
 
 #################   Adds details of a new user into the database
 
-def ccAddUser(handle):
+def ccAddUser(handle,server):
     try:
-        if(ccSearchDatabase(handle)):
+        if(ccSearchDatabase(handle,server)):
             return "== User already added to database =="
         req = 'https://www.codechef.com/users/'+str(handle)
         fhand = requests.get(req).content
@@ -143,7 +148,7 @@ def ccAddUser(handle):
             vname = name[0].text
             rating = soup.find_all("div",{"class":"rating-number"})
             vrating = int(rating[0].text)
-            cur.execute("INSERT INTO CODECHEF (HANDLE, NAME, RATING) VALUES (? , ? , ?)",(handle,vname,vrating,))
+            cur.execute("INSERT INTO CODECHEF (SREVER,HANDLE, NAME, RATING) VALUES (? , ? , ? , ?)",(server,handle,vname,vrating,))
             conn.commit()
             return "User successfully added to database"
     except:

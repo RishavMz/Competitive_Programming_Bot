@@ -1,7 +1,7 @@
 import discord
 import os
 from dotenv import load_dotenv
-os.system('sqlite3 COMPROG.db')
+#os.system('sqlite3 COMPROG.db')
 from files.codeforces import *
 from files.codechef import *
 from discord.ext import commands, tasks
@@ -55,6 +55,12 @@ async def called_once_a_day(message):               # Sets remainder about upcom
     ccUpdateDatabase()
     cfUpdateDatabase()
 
+
+@tasks.loop(seconds=600)                               # Loop runs every 60 seconds 
+async def stay_awake():                                # keeps the bot awake
+    print("#")
+
+
 bot = Bot("!")
 @bot.command()
 async def embed(channel,text):
@@ -64,6 +70,7 @@ async def embed(channel,text):
 @client.event
 async def on_ready():                               #check if bot loaded(ready)
     print('We have logged in as {0.user}'.format(client))
+    stay_awake()
 
 @client.event
 async def on_message(message):                      #check if message recieved(read by bot)
@@ -71,64 +78,67 @@ async def on_message(message):                      #check if message recieved(r
     if message.author == client.user:               
         return                                      #if message was sent by itself
     try:
-        if message.content.startswith('$cfcontests'):   #Following command list
+        if message.content.startswith('$$cfcontests'):   #Following command list
             msg = cfContestList()
             await embed(message.channel,msg)
 
-        elif message.content.startswith('$cfrating'):
+        elif message.content.startswith('$$cfrating'):
             msg = message.content.split()
             res = cfRatingChange(msg[1])
             await embed(message.channel,res)
 
-        elif message.content.startswith('$cfuser'):
+        elif message.content.startswith('$$cfuser'):
             msg = message.content.split()
             res = cfUserInfo(msg[1:])
             await embed(message.channel,res)
 
-        elif message.content.startswith('$cfranklist'):
+        elif message.content.startswith('$$cfranklist'):
             msg = message.content.split()
             res = cfRanklist(msg[1] , msg[2:])
             await embed(message.channel,res)  
 
-        elif message.content.startswith('$cccontests'):
+        elif message.content.startswith('$$cccontests'):
             msg = ccContestList()
             await embed(message.channel,msg)
 
-        elif message.content.startswith('$ccuser'):
+        elif message.content.startswith('$$ccuser'):
             msg = message.content.split()
             res = ccUserInfo(msg[1])
             await embed(message.channel,res)
 
-        elif message.content.startswith('$help'):
+        elif message.content.startswith('$$help'):
             await embed(message.channel,helpmessage)           
 
-        elif message.content.startswith('$startbotnotifier'):   
+        elif message.content.startswith('$$startbotnotifier'):   
             if loop == 0 :    
                 loop = 1             
                 called_once_a_day.start(message) 
             else:
                 await embed(message.channel,'Notifier already set for this channel') 
 
-        elif message.content.startswith('$stopbotnotifier'):
+        elif message.content.startswith('$$stopbotnotifier'):
             if(loop == 1):
                 loop = 0
                 called_once_a_day.stop()
             else:
                 await embed(message.channel,'This feature cannot be disabled as it has not been enabled')
 
-        elif message.content.startswith('$ccdbusers'):
-            res = ccGetUsersFromDatabase()
+        elif message.content.startswith('$$ccdbusers'):
+            res = ccGetUsersFromDatabase(message.guild.id)
             await message.channel.send(res)
 
-        elif message.content.startswith('$cfdbusers'):
-            res = cfGetUsersFromDatabase()
+        elif message.content.startswith('$$cfdbusers'):
+            res = cfGetUsersFromDatabase(message.guild.id)
             await message.channel.send(res)
 
-        elif message.content.startswith('$cfdbadd'):
+        elif message.content.startswith('$$cfdbadd'):
             msg = message.content.split()
-            res = cfAddUser(msg[1])
+            res = cfAddUser(msg[1],message.guild.id)
             await message.channel.send(res)                    
-
+        elif message.content.startswith('$$ccdbadd'):
+            msg = message.content.split()
+            res = ccAddUser(msg[1],message.guild.id)
+            await message.channel.send(res)
     except:
         await message.channel.send('Sorry, there is some error in your syntax') 
 
