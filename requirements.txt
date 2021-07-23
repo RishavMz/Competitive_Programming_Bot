@@ -1,0 +1,5 @@
+discord.py
+python-dotenv
+psycopg2
+bs4
+requests

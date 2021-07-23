@@ -55,9 +55,9 @@ async def called_once_a_day(message):               # Sets remainder about upcom
     cfUpdateDatabase()
 
 
-@tasks.loop(seconds=600)                               # Loop runs every 60 seconds 
-async def stay_awake():                                # keeps the bot awake
-    print("#")
+#@tasks.loop(seconds=600)                               # Loop runs every 60 seconds 
+#async def stay_awake():                                # keeps the bot awake
+#    print("#")
 
 
 bot = Bot("!")
@@ -69,7 +69,7 @@ async def embed(channel,text):
 @client.event
 async def on_ready():                               #check if bot loaded(ready)
     print('We have logged in as {0.user}'.format(client))
-    await stay_awake()
+    #.await stay_awake()
 
 @client.event
 async def on_message(message):                      #check if message recieved(read by bot)
